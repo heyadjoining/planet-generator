@@ -46,8 +46,8 @@ export interface IPlanetPickerProps {
     hats?: Attribute[];
 }
 
-const CANVAS_WIDTH = 128;
-const CANVAS_HEIGHT = 128;
+const CANVAS_WIDTH = 512;
+const CANVAS_HEIGHT = 512;
 
 export function pickRandomAttributeImg(items: any, allowEmpty?: boolean, emptyProbability?: number) {
     if (items.length === 0) {
@@ -266,15 +266,15 @@ export function PlanetPicker(props: IPlanetPickerProps) {
                         flexDirection: 'column',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        width: '128px',
+                        width: '512px',
                         ...props.styles,
                     }}
                 >
                     <canvas
                         id={`canvas-${props.id}`}
                         style={{
-                            height: '128px',
-                            width: '128px',
+                            height: '512px',
+                            width: '512px',
                             marginTop: '50px',
                         }}
                     >
@@ -291,7 +291,7 @@ export function PlanetPicker(props: IPlanetPickerProps) {
                             variant="contained"
                             color="primary"
                             style={{
-                                width: '128px',
+                                width: '512px',
                             }}
                             onClick={handleRandomButton}
                             size="small"
