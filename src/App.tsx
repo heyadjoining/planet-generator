@@ -189,6 +189,7 @@ function Uploader(props: IUploaderProps) {
                 marginTop: '10px',
             }}>
                 <input
+                  multiple={true}
                   color="primary"
                   accept="image/*"
                   type="file"
@@ -230,54 +231,6 @@ function AssetUploader(props: IAssetUploaderProps) {
         setFeatures,
         setHats,
     } = props;
-
-    const [error, setError] = React.useState('');
-
-    function readFileAsync(file: Blob): Promise<string> {
-        return new Promise((resolve, reject) => {
-            let reader = new FileReader();
-
-            reader.onload = () => {
-                resolve(reader.result as string);
-            };
-
-            reader.onerror = reject;
-
-            reader.readAsDataURL(file);
-        })
-    }
-
-    async function handleUpload(e: React.ChangeEvent<HTMLInputElement>, setStateFunc: any, existingFiles: Attribute[]) {
-        if (!e.target.files || e.target.files.length === 0) {
-            return;
-        }
-
-        const uploadedFiles = e.target.files;
-        const newFiles: Attribute[] = [...existingFiles];
-
-        let haveError = false;
-
-        for (const file of uploadedFiles) {
-            if (!file.type.startsWith('image')) {
-                setError(`File ${file.name} does not appear to be an image file, but a ${file.type}`);
-                haveError = true;
-                continue;
-            }
-
-            const fileData = await readFileAsync(file);
-
-            newFiles.push({
-                name: file.name,
-                image: fileData,
-            });
-        }
-
-        if (!haveError) {
-            setError('');
-        }
-
-        setStateFunc(newFiles);
-    }
 
     return (
         <Grid container spacing={1} style={{ width: '1000px' }} alignItems='center' justifyContent='center'>
