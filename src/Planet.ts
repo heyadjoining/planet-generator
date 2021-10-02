@@ -5,21 +5,20 @@ export class Planet {
     private canvas?: fabric.Canvas | fabric.StaticCanvas;
 
     constructor(
-        public body: Attribute,
         public background: Attribute,
+        public body: Attribute,
+        public face: Attribute,
+        public hand: Attribute,
         public orbit: Attribute,
-        public eyes: Attribute,
-        public mouth: Attribute,
-        public hands: Attribute,
-        public hat: Attribute,
-        public features: Attribute,
     ) {
     }
 
-    private async loadImage(base64: string) {
+    private async loadImage(base64: string, canvasSize: number) {
         return new Promise<void>((res) => {
             fabric.Image.fromURL(base64, (img) => {
                 img.selectable = false;
+                img.scaleToHeight(canvasSize);
+                img.scaleToWidth(canvasSize);
                 this?.canvas?.add(img);
                 res();
             });
@@ -30,7 +29,7 @@ export class Planet {
         this.canvas = canvas;
     }
 
-    public async draw() {
+    public async draw(canvasSize: number) {
         if (!this.canvas) {
             return;
         }
@@ -44,18 +43,15 @@ export class Planet {
         for (const item of [
             this.background,
             this.body,
+            this.face,
+            this.hand,
             this.orbit,
-            this.features,
-            this.eyes,
-            this.mouth,
-            this.hands,
-            this.hat,
         ]) {
             if (!item || item.image === '') {
                 continue;
             }
 
-            await this.loadImage(item.image);
+            await this.loadImage(item.image, canvasSize);
         }
     }
 }

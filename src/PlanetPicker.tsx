@@ -1,6 +1,6 @@
 import React from 'react';
 import { fabric } from 'fabric';
-import { Button, TextField } from '@material-ui/core';
+import { MenuItem, Select, Button, TextField } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 
 import * as defaultImages from './Images'; 
@@ -29,25 +29,18 @@ export interface IPlanetPickerProps {
     /* Call this function when a new planet is selected / generated */
     onPlanetChange?: (planet: Planet) => void;
 
-    backgrounds?: Attribute[];
+    backgrounds: Attribute[];
 
-    bodies?: Attribute[];
+    bodies: Attribute[];
 
-    mouths?: Attribute[];
+    faces: Attribute[];
 
-    hands?: Attribute[];
+    hands: Attribute[];
 
-    orbits?: Attribute[];
-
-    eyes?: Attribute[];
-
-    features?: Attribute[];
-
-    hats?: Attribute[];
+    orbits: Attribute[];
 }
 
-const CANVAS_WIDTH = 512;
-const CANVAS_HEIGHT = 512;
+const CANVAS_SIZE = 256;
 
 export function pickRandomAttributeImg(items: any, allowEmpty?: boolean, emptyProbability?: number) {
     if (items.length === 0) {
@@ -86,27 +79,33 @@ export function pickRandomAttribute(items: any, allowEmpty?: boolean, emptyProba
 export function PlanetPicker(props: IPlanetPickerProps) {
     const [canvas, setCanvas] = React.useState<fabric.StaticCanvas>();
 
-    const { backgrounds, bodies, mouths, hands, hats, orbits, eyes, features } = props;
+    const {
+        backgrounds,
+        bodies,
+        faces,
+        hands,
+        orbits,
+    } = props;
 
-    const availableBackgrounds = backgrounds || [...defaultImages.backgrounds];
-    const availableBodies = bodies || [...defaultImages.bodies];
-    const availableMouths = mouths || [...defaultImages.mouths];
-    const availableHands = hands || [...defaultImages.hands];
-    const availableHats = hats || [...defaultImages.hats];
-    const availableOrbits = orbits || [...defaultImages.orbits];
-    const availableEyes = eyes || [...defaultImages.eyes];
-    const availableFeatures = features || [...defaultImages.features];
+    const availableBackgrounds = backgrounds.concat(defaultImages.backgrounds);
+    const availableBodies = bodies.concat(defaultImages.bodies);
+    const availableFaces = faces.concat(defaultImages.faces);
+    const availableHands = hands.concat(defaultImages.hands);
+    const availableOrbits = orbits.concat(defaultImages.orbits);
     
     const backgroundOptions = [...availableBackgrounds];
     const bodyOptions = [...availableBodies];
-    const mouthOptions = [...availableMouths];
+    const faceOptions = [...availableFaces];
     const handOptions = [...availableHands];
-    const hatOptions = [...availableHats];
     const orbitsOptions = [...availableOrbits];
-    const eyeOptions = [...availableEyes];
-    const featureOptions = [...availableFeatures];
 
-    for (const arr of [backgroundOptions, bodyOptions, mouthOptions, handOptions, hatOptions, orbitsOptions, eyeOptions, featureOptions]) {
+    for (const arr of [
+        backgroundOptions,
+        bodyOptions,
+        faceOptions,
+        handOptions,
+        orbitsOptions,
+    ]) {
         arr.sort((a, b) => a.name.localeCompare(b.name));
 
         arr.unshift({
@@ -117,40 +116,35 @@ export function PlanetPicker(props: IPlanetPickerProps) {
 
     const [backgroundVal, setBackground] = React.useState<Attribute>(pickRandomAttribute(availableBackgrounds));
     const [bodyVal, setBody] = React.useState<Attribute>(pickRandomAttribute(availableBodies));
-    const [eyesVal, setEyes] = React.useState<Attribute>(pickRandomAttribute(availableEyes));
-    const [mouthsVal, setMouth] = React.useState<Attribute>(pickRandomAttribute(availableMouths));
-    const [featuresVal, setFeatures] = React.useState<Attribute>(pickRandomAttribute(availableFeatures, true));
-    const [orbitsVal, setOrbits] = React.useState<Attribute>(pickRandomAttribute(availableOrbits, true, 0.5));
-    const [handsVal, setHands] = React.useState<Attribute>(pickRandomAttribute(availableHands, true, 0.3));
-    const [hatVal, setHats] = React.useState<Attribute>(pickRandomAttribute(availableHats, true, 0.5));
+    const [facesVal, setFace] = React.useState<Attribute>(pickRandomAttribute(availableFaces));
+    const [handsVal, setHands] = React.useState<Attribute>(pickRandomAttribute(availableHands));
+    const [orbitsVal, setOrbits] = React.useState<Attribute>(pickRandomAttribute(availableOrbits));
+    const [canvasSize, setCanvasSize] = React.useState<number>(CANVAS_SIZE);
 
     const { onPlanetChange } = props;
 
     React.useEffect(() => {
         const canvasObj = new fabric.StaticCanvas(`canvas-${props.id}`, {
-            width: CANVAS_WIDTH,
-            height: CANVAS_HEIGHT,
+            width: canvasSize,
+            height: canvasSize,
         });
 
         setCanvas(canvasObj);
-    }, [props.id]);
+    }, [props.id, canvasSize]);
 
     React.useEffect(() => {
         if (canvas) {
             const planet = new Planet(
-                bodyVal,
                 backgroundVal,
-                orbitsVal,
-                eyesVal,
-                mouthsVal,
+                bodyVal,
+                facesVal,
                 handsVal,
-                hatVal,
-                featuresVal,
+                orbitsVal,
             );
 
             planet.setCanvas(canvas);
 
-            planet.draw();
+            planet.draw(canvasSize);
 
             if (onPlanetChange) {
                 onPlanetChange(planet);
@@ -161,12 +155,10 @@ export function PlanetPicker(props: IPlanetPickerProps) {
         canvas,
         backgroundVal,
         bodyVal,
-        eyesVal,
-        mouthsVal,
-        featuresVal,
-        orbitsVal,
+        facesVal,
         handsVal,
-        hatVal,
+        orbitsVal,
+        canvasSize,
     ]);
 
     function handleRandomButton() {
@@ -176,12 +168,9 @@ export function PlanetPicker(props: IPlanetPickerProps) {
 
         setBackground(pickRandomAttribute(availableBackgrounds));
         setBody(pickRandomAttribute(availableBodies));
-        setEyes(pickRandomAttribute(availableEyes));
-        setMouth(pickRandomAttribute(availableMouths));
-        setFeatures(pickRandomAttribute(availableFeatures, true));
-        setOrbits(pickRandomAttribute(availableOrbits, true, 0.5));
+        setFace(pickRandomAttribute(availableFaces));
         setHands(pickRandomAttribute(availableHands, true, 0.3));
-        setHats(pickRandomAttribute(availableHats, true, 0.5));
+        setOrbits(pickRandomAttribute(availableOrbits, true, 0.5));
     }
 
     function handleAttributeChange(event: React.ChangeEvent<{}>, newValue: Attribute | null, setStateFunc: any) {
@@ -199,6 +188,46 @@ export function PlanetPicker(props: IPlanetPickerProps) {
                 justifyContent: 'center',
                 padding: '1rem',
             }}>
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: `${canvasSize}px`,
+                        ...props.styles,
+                    }}
+                >
+                    <canvas
+                        id={`canvas-${props.id}`}
+                        style={{
+                            width: `${canvasSize}px`,
+                            height: `${canvasSize}px`,
+                        }}
+                    >
+                    </canvas>
+                    <div
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            marginTop: '15px',
+                        }}
+                    >
+                        {props.includeRandomButton && <Button
+                            variant="contained"
+                            color="primary"
+                            style={{
+                                width: `${canvasSize}px`,
+                            }}
+                            onClick={handleRandomButton}
+                            size="small"
+                        >
+                            Random
+                        </Button>}
+                    </div>
+                </div>
+
                 {props.includeConfigurationOptions &&
                     <div
                         style={{
@@ -206,7 +235,7 @@ export function PlanetPicker(props: IPlanetPickerProps) {
                             flexDirection: 'column',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            marginRight: '30px',
+                            marginLeft: '30px',
                             ...props.configLeftStyles,
                         }}
                     >
@@ -234,12 +263,12 @@ export function PlanetPicker(props: IPlanetPickerProps) {
                             }}
                         />
                         <Autocomplete
-                            onChange={(e, v) => handleAttributeChange(e, v, setMouth)}
-                            options={mouthOptions}
-                            value={mouthsVal}
+                            onChange={(e, v) => handleAttributeChange(e, v, setFace)}
+                            options={faceOptions}
+                            value={facesVal}
                             getOptionLabel={(option) => option.name}
                             getOptionSelected={(option, value) => option.name === value.name}
-                            renderInput={(params) => <TextField {...params} label="Mouths" variant="outlined"/>}
+                            renderInput={(params) => <TextField {...params} label="Faces" variant="outlined"/>}
                             style={{
                                 width: '200px',
                                 marginTop: '11px',
@@ -257,107 +286,32 @@ export function PlanetPicker(props: IPlanetPickerProps) {
                                 marginTop: '11px',
                             }}
                         />
-
-                    </div>
-                }
-                <div
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: '512px',
-                        ...props.styles,
-                    }}
-                >
-                    <canvas
-                        id={`canvas-${props.id}`}
-                        style={{
-                            height: '512px',
-                            width: '512px',
-                            marginTop: '50px',
-                        }}
-                    >
-                    </canvas>
-                    <div
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            marginTop: '15px',
-                        }}
-                    >
-                        {props.includeRandomButton && <Button
-                            variant="contained"
-                            color="primary"
-                            style={{
-                                width: '512px',
-                            }}
-                            onClick={handleRandomButton}
-                            size="small"
-                        >
-                            Random
-                        </Button>}
-                    </div>
-                </div>
-                {props.includeConfigurationOptions &&
-                    <div
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            marginLeft: '30px',
-                            ...props.configRightStyles,
-                        }}
-                    >
-                        <Autocomplete
-                            onChange={(e, v) => handleAttributeChange(e, v, setHats)}
-                            options={hatOptions}
-                            value={hatVal}
-                            getOptionLabel={(option) => option.name}
-                            getOptionSelected={(option, value) => option.name === value.name}
-                            renderInput={(params) => <TextField {...params} label="Hats" variant="outlined"/>}
-                            style={{
-                                width: '200px',
-                            }}
-                        />
                         <Autocomplete
                             onChange={(e, v) => handleAttributeChange(e, v, setOrbits)}
                             options={orbitsOptions}
                             value={orbitsVal}
                             getOptionLabel={(option) => option.name}
                             getOptionSelected={(option, value) => option.name === value.name}
-                            renderInput={(params) => <TextField {...params} label="Orbits" variant="outlined"/>}
+                            renderInput={(params) => <TextField {...params} label="Orbit" variant="outlined"/>}
                             style={{
                                 width: '200px',
                                 marginTop: '11px',
                             }}
                         />
-                        <Autocomplete
-                            onChange={(e, v) => handleAttributeChange(e, v, setEyes)}
-                            options={eyeOptions}
-                            value={eyesVal}
-                            getOptionLabel={(option) => option.name}
-                            getOptionSelected={(option, value) => option.name === value.name}
-                            renderInput={(params) => <TextField {...params} label="Eyes" variant="outlined"/>}
+                        <Select
+                            onChange={(e) => setCanvasSize(Number(e.target.value))}
+                            value={canvasSize}
                             style={{
                                 width: '200px',
                                 marginTop: '11px',
                             }}
-                        />
-                        <Autocomplete
-                            onChange={(e, v) => handleAttributeChange(e, v, setFeatures)}
-                            options={featureOptions}
-                            value={featuresVal}
-                            getOptionLabel={(option) => option.name}
-                            getOptionSelected={(option, value) => option.name === value.name}
-                            renderInput={(params) => <TextField {...params} label="Features" variant="outlined"/>}
-                            style={{
-                                width: '200px',
-                                marginTop: '11px',
-                            }}
-                        />
+                        >
+                            <MenuItem value={CANVAS_SIZE}>{`${CANVAS_SIZE}x${CANVAS_SIZE}`}</MenuItem>
+                            <MenuItem value={128}>128x128</MenuItem>
+                            <MenuItem value={256}>256x256</MenuItem>
+                            <MenuItem value={512}>512x512</MenuItem>
+                            <MenuItem value={1024}>1024x1024</MenuItem>
+                        </Select>
                     </div>
                 }
             </div>

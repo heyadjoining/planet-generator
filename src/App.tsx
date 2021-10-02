@@ -20,21 +20,11 @@ interface TabPanelProps {
 }
 
 interface IGeneratorProps {
-    backgrounds?: Attribute[];
-
-    bodies?: Attribute[];
-
-    mouths?: Attribute[];
-
-    hands?: Attribute[];
-
-    orbits?: Attribute[];
-
-    eyes?: Attribute[];
-
-    features?: Attribute[];
-
-    hats?: Attribute[];
+    backgrounds: Attribute[];
+    bodies: Attribute[];
+    faces: Attribute[];
+    orbits: Attribute[];
+    hands: Attribute[];
 }
 
 interface IUploaderProps {
@@ -46,21 +36,15 @@ interface IUploaderProps {
 interface IAssetUploaderProps {
     backgrounds: Attribute[];
     bodies: Attribute[];
-    mouths: Attribute[];
-    hands: Attribute[];
+    faces: Attribute[];
     orbits: Attribute[];
-    eyes: Attribute[];
-    features: Attribute[];
-    hats: Attribute[];
+    hands: Attribute[];
 
     setBackgrounds: (prevState: Attribute[]) => void;
     setBodies: (prevState: Attribute[]) => void;
-    setMouths: (prevState: Attribute[]) => void;
-    setHands: (prevState: Attribute[]) => void;
+    setFaces: (prevState: Attribute[]) => void;
     setOrbits: (prevState: Attribute[]) => void;
-    setEyes: (prevState: Attribute[]) => void;
-    setFeatures: (prevState: Attribute[]) => void;
-    setHats: (prevState: Attribute[]) => void;
+    setHands: (prevState: Attribute[]) => void;
 }
 
 const theme = createTheme({
@@ -106,12 +90,9 @@ function PlanetGenerator(props: IGeneratorProps) {
                     includeConfigurationOptions={true}
                     backgrounds={props.backgrounds}
                     bodies={props.bodies}
-                    mouths={props.mouths}
+                    faces={props.faces}
                     hands={props.hands}
                     orbits={props.orbits}
-                    eyes={props.eyes}
-                    features={props.features}
-                    hats={props.hats}
                 />
             </div>
         </div>
@@ -216,20 +197,14 @@ function AssetUploader(props: IAssetUploaderProps) {
     const {
         backgrounds,
         bodies,
-        mouths,
+        faces,
         hands,
         orbits,
-        eyes,
-        features,
-        hats,
         setBackgrounds,
         setBodies,
-        setMouths,
+        setFaces,
         setHands,
         setOrbits,
-        setEyes,
-        setFeatures,
-        setHats,
     } = props;
 
     return (
@@ -250,9 +225,9 @@ function AssetUploader(props: IAssetUploaderProps) {
             </Grid>
             <Grid item xs={3} sm={3} md={3}>
                 <Uploader
-                    items={mouths}
-                    setItems={setMouths}
-                    name={'mouths'}
+                    items={faces}
+                    setItems={setFaces}
+                    name={'faces'}
                 />
             </Grid>
             <Grid item xs={3} sm={3} md={3}>
@@ -269,27 +244,6 @@ function AssetUploader(props: IAssetUploaderProps) {
                     name={'orbits'}
                 />
             </Grid>
-            <Grid item xs={3} sm={3} md={3}>
-                <Uploader
-                    items={eyes}
-                    setItems={setEyes}
-                    name={'eyes'}
-                />
-            </Grid>
-            <Grid item xs={3} sm={3} md={3}>
-                <Uploader
-                    items={features}
-                    setItems={setFeatures}
-                    name={'features'}
-                />
-            </Grid>
-            <Grid item xs={3} sm={3} md={3}>
-                <Uploader
-                    items={hats}
-                    setItems={setHats}
-                    name={'hats'}
-                />
-            </Grid>
         </Grid>
     );
 }
@@ -298,12 +252,9 @@ function App() {
     const [tab, setTab] = React.useState(0);
     const [backgrounds, setBackgrounds] = React.useState<Attribute[]>([]);
     const [bodies, setBodies] = React.useState<Attribute[]>([]);
-    const [mouths, setMouths] = React.useState<Attribute[]>([]);
+    const [faces, setFaces] = React.useState<Attribute[]>([]);
     const [hands, setHands] = React.useState<Attribute[]>([]);
     const [orbits, setOrbits] = React.useState<Attribute[]>([]);
-    const [eyes, setEyes] = React.useState<Attribute[]>([]);
-    const [features, setFeatures] = React.useState<Attribute[]>([]);
-    const [hats, setHats] = React.useState<Attribute[]>([]);
 
     function handleTabChange(event: React.ChangeEvent<{}>, newValue: number) {
         setTab(newValue);
@@ -332,20 +283,14 @@ function App() {
                         <AssetUploader
                             backgrounds={backgrounds}
                             bodies={bodies}
-                            mouths={mouths}
+                            faces={faces}
                             hands={hands}
                             orbits={orbits}
-                            eyes={eyes}
-                            features={features}
-                            hats={hats}
                             setBackgrounds={setBackgrounds}
                             setBodies={setBodies}
-                            setMouths={setMouths}
+                            setFaces={setFaces}
                             setHands={setHands}
                             setOrbits={setOrbits}
-                            setEyes={setEyes}
-                            setFeatures={setFeatures}
-                            setHats={setHats}
                         />
                     </div>
                 </TabPanel>
@@ -353,12 +298,9 @@ function App() {
                     <PlanetGenerator
                         backgrounds={backgrounds}
                         bodies={bodies}
-                        mouths={mouths}
+                        faces={faces}
                         hands={hands}
                         orbits={orbits}
-                        eyes={eyes}
-                        features={features}
-                        hats={hats}
                     />
                 </TabPanel>
             </ThemeProvider>
