@@ -64,6 +64,10 @@ const loadedBackgrounds: LoadedAttribute[] = [
         name: 'SolanaVoid',
         image: require(`${__dirname}/../assets/backgrounds/01_14_SolanaVoid.png`),
     },
+    {
+        name: 'Spiral',
+        image: require(`${__dirname}/../assets/backgrounds/01_15_Spiral.png`),
+    },
 ];
 
 const loadedBodies: LoadedAttribute[] = [
