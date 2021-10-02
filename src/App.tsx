@@ -269,11 +269,11 @@ function App() {
                         onChange={handleTabChange}
                         centered
                     > 
-                        <Tab label="Asset Uploader"/>
                         <Tab label="Planet Generator"/>
+                        <Tab label="Asset Uploader"/>
                     </Tabs>
                 </AppBar>
-                <TabPanel value={tab} index={0}>
+                <TabPanel value={tab} index={1}>
                     <div style={{
                         flexDirection: 'row',
                         alignItems: 'center',
@@ -294,7 +294,7 @@ function App() {
                         />
                     </div>
                 </TabPanel>
-                <TabPanel value={tab} index={1}>
+                <TabPanel value={tab} index={0}>
                     <PlanetGenerator
                         backgrounds={backgrounds}
                         bodies={bodies}
